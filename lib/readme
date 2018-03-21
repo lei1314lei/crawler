@@ -1,0 +1,6 @@
+Files in lib directory are splite from phpQuery-onefile. For meet our requirement, i have do some changes below
+1.DOMDocumentWrapper->contentTypeFromHTML
+default charset get dont support short expression used in html5, for example <meta charset="gbk">, add re
+ $patter="@<meta[^>]+(charset)\\s*=\\s*[\"'](.+)[\"']>@i"; // for html5 charset setting <meta charset="gbk"/>
+ $patter='@<meta[^>]+(charset)\\s*=\\s*["|\'](.+)["|\'](.)+>@i'; // for html5 charset setting <meta charset="gbk">
+            preg_match($patter, $markup, $matches);

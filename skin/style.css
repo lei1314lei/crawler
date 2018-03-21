@@ -1,0 +1,12 @@
+body{font-size:20px}
+form{
+    margin: 0 auto;
+    width: auto;}
+.element{margin-bottom: 15px;}
+.wrap{  background: white;
+    width: 500px;
+    margin: 0 auto;
+    border: 3px solid rgb(150, 143, 143);
+    padding: 10px 0px 10px 30px;}
+button{  padding: 5px 10px; font-size: 20px;}
+.title{font-size:24px;font-weight:bold}
