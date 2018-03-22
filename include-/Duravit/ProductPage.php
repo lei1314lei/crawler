@@ -32,7 +32,7 @@ class Duravit_ProductPage extends ProductPage
         $this->_productlist->addRow("sku,title,description");
 
         foreach ($this->_allProductUrls as $productUrl) {
-            $this->_loadPage($productUrl);
+            $this->loadPage($productUrl);
             $reference = $this->_getReference(); //product partno
             if ($reference) {
                 $this->_log->addRow($reference . ' download at ' . date('Y-m-d H:i:s'));

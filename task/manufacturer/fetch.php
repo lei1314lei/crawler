@@ -30,7 +30,7 @@ class Joy_Shell extends Shell{
         if($this->getVar("info")) {
             $this->fetchInfo($this->getVar("info"));
         } elseif($this->getVar("url")){
-            $this->fetchAllProductsUrl($this->getVar("url"));
+            $this->recordAllProductUrl($this->getVar("url"));
         } elseif($this->getVar("help")) {
             echo $this->usageHelp();
         } elseif($this->getVar("all")) {
@@ -43,7 +43,7 @@ class Joy_Shell extends Shell{
 
     }
 
-    public function fetchAllProductsUrl($manufacturer) {
+    public function recordAllProductUrl($manufacturer) {
         $fileName = $manufacturer."products.csv";
         $dir = DATA_DOWNLOAD_DIR . DS . $manufacturer;
         if(is_file($dir .DS.$fileName)) {
@@ -53,7 +53,7 @@ class Joy_Shell extends Shell{
         $class = uc_words($manufacturer)."_CategoryPage";
         $category = new $class($dir);
         // $duravit_category->product_urls_log_dir = ;
-        $category->getAllProductUrl($fileName);
+        $category->recordAllProductUrl($fileName);
         echo "get {$manufacturer} product urls done" . "\n";
         return $dir .DS.$fileName;
 
@@ -67,7 +67,7 @@ class Joy_Shell extends Shell{
             die ("Valid " .$manufacturer . "\n");
 
         }
-        $file = $this->fetchAllProductsUrl($manufacturer);
+        $file = $this->recordAllProductUrl($manufacturer);
 
         $urls = csvToarray($file);
         $urls = array_column($urls,0);
@@ -79,6 +79,25 @@ class Joy_Shell extends Shell{
         echo "get {$manufacturer} product information done" . "\n";
         return;
 
+    }
+    public function fetchProductImgs($manufacturer)
+    {
+        // check manufacuturer first
+        if(!in_array(strtolower($manufacturer),$this->_manufucturers)) {
+            die ("Valid " .$manufacturer . "\n");
+
+        }
+        $file = $this->recordAllProductUrl($manufacturer);
+
+        $urls = csvToarray($file);
+        $urls = array_column($urls,0);
+        $class = uc_words($manufacturer)."_ProductPage";
+        $productpage = new $class(NULL,$urls);
+        unset($urls);
+        $productpage->_data_download_dir = DATA_DOWNLOAD_DIR . DS . $manufacturer;
+        $productpage->loadAllProductImgs();
+        echo "get {$manufacturer} product information done" . "\n";
+        return;
     }
 
     public function usageHelp() {
@@ -93,7 +112,7 @@ USAGE;
 
 }
 
-$shell = new Joy_Shell($manufucturer);
-$shell->run();
+//$shell = new Joy_Shell($manufucturer);
+//$shell->run();
 
 ?>

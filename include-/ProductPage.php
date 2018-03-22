@@ -8,7 +8,7 @@
 //include  "../Page.php";
 abstract class ProductPage extends Page {
     protected $_pageUrl;
-    protected $_imgSelector;
+   // protected $_imgSelector;
     protected $_allProductUrls;
    // protected $_productNameSelector;
     protected $_imgSuffix;
@@ -52,22 +52,24 @@ abstract class ProductPage extends Page {
         $this->charset = $charset;
         return $this;
     }
-    public function setImgSelector($imgSelector){
-        $this->_imgSelector=$imgSelector;
-        return $this;
-    }
-    public function getImgSelector(){
-        return $this->_imgSelector ;
-    }
+//    public function setImgSelector($imgSelector){
+//        $this->_imgSelector=$imgSelector;
+//        return $this;
+//    }
+//    public function getImgSelector(){
+//        return $this->_imgSelector ;
+//    }
     public function loadAllProductImgs(){
         foreach($this->_allProductUrls as $productUrl){
-            $this->_loadImgFromPage($productUrl);
+            $imgFile=$this->_loadImgFromPage($productUrl);
+            $imgLoger->addRow($imgFile);
         }
 
     }
+    
 
-    public function _loadImgFromPage($productUrl){
-//        $this->_loadPage($productUrl);
+    protected function _loadImgFromPage($productUrl){
+        $this->loadPage($productUrl);
         $src=$this->_getImgSrc();
         $this->_setImgSuffix($src);
         $data=  file_get_contents($src);
@@ -75,22 +77,34 @@ abstract class ProductPage extends Page {
         $fp=fopen($imgName,'w+');
         @fwrite($fp,$data); 
         fclose($fp);
+        return $imgName;
+    }
+    protected function _getImgSrc()
+    {
+        $imgEles=pq($this->_imgSelector());
+        foreach($imgEles as $v) {
+            if($href = pq($v)->attr("src")) {
+                return $href;
+            }else{
+                throw new NoImgException("can't extract img url");
+            }
+        }
     }
 
     /*
      * load product base info by joy
      */
-
-    protected function _loadPage($productUrl){
-        $this->_currentPage=$productUrl;
-        $html=  file_get_contents($productUrl);
-        $this->before($html);
-        phpQuery::newDocumentHTML($html,$this->charset);
-    }
-
-    public function before($html){ // if data need to be deal with before
-        return $this;
-    }
+//
+//    public function loadPage($productUrl){
+//        $this->_currentPage=$productUrl;
+//        $html=  file_get_contents($productUrl);
+//        $this->before($html);
+//        phpQuery::newDocumentHTML($html,$this->charset);
+//    }
+//
+//    public function before($html){ // if data need to be deal with before
+//        return $this;
+//    }
     protected function _setImgSuffix($src){
         $suffix=substr($src,strrpos($src,'.'));
         if(strpos($suffix,'?')) $suffix=preg_replace ("/\?.+/", '', $suffix);
@@ -102,11 +116,12 @@ abstract class ProductPage extends Page {
     }
     
     ////////////////////
-    protected function _generateImgName(){
-        //$prefix=$this->_imgmgNamePrefix();
-        $suffix=$this->_getImgSuffix();
-       // return $prefix.$suffix;
-    }
+//    protected function _generateImgName(){
+//        //$prefix=$this->_imgmgNamePrefix();
+//        $suffix=$this->_getImgSuffix();
+//       // return $prefix.$suffix;
+//    }
+    abstract protected function _generateImgName();
 
     public function prepareLog() {
         $this->_log = new Log('product_download' . date('Ymdhis') . '.csv', null,null,null, $this->_data_download_dir);
