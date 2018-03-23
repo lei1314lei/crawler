@@ -4,7 +4,7 @@ class Page{
     protected $_pageUrl;
     protected $_doc;
     protected $_charset="utf-8";
-    const FLAG_PAGE_URL='page-url';
+    const DATA_FROM='data-from';
 
 
     public function getPageUrl()

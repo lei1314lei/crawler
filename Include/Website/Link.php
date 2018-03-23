@@ -1,8 +1,8 @@
 <?php
 
-class Link 
+class Website_Link 
 {
-    static protected function _paddingRelativeUrl(Page $page,$path)
+    static protected function _paddingRelativeUrl(Website_Page $page,$path)
     {
         if(self::isRelative($path))
         {
@@ -13,7 +13,7 @@ class Link
         return $return;
     }
 
-    static public function paddingRelativeUrl(Page $page,$path)
+    static public function paddingRelativeUrl(Website_Page $page,$path)
     {
           if(is_array($path))
           {

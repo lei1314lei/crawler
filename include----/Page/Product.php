@@ -21,7 +21,7 @@ abstract class Page_Product extends Page
             $info['src']=array_pop($srcs);
             $info['name']=$name;
         }
-        $info[Page::FLAG_PAGE_URL]=$this->_pageUrl;
+        $info[Page::DATA_FROM]=$this->_pageUrl;
         $infos[]=$info;
         return $infos;
     }

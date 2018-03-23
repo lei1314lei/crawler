@@ -42,9 +42,19 @@ $listPageUrls=array(
 //var_dump($prodUrls);
 
 $categoryUrl='https://www.hansgrohe.de/kueche/produkte?page=1';
+
+$categoryPagination=Hansgrohe_Category_Pagination($categoryUrl);
+$HansgrohePaginationSet=new Hansgrohe_Category($categoryPagination);
+$urls=$HansgrohePaginationSet->getAllProdsUrlInfo();
+
+var_dump($urls);exit;
+
+
 $categoryPage=new Hansgrohe_Page_Category($categoryUrl);
-$hrefs=$categoryPage->getAllItemsOfCategory(".product-mini__link", 'href'); 
-var_dump('haha',$hrefs);
+//$hrefs=$categoryPage->getAllItemsOfCategory(".product-mini__link", 'href'); 
+$hrefs=$categoryPage->getAllProdUrls();
+$hrefs2=$categoryPage->getAllProdUrlsInfo();
+var_dump('haha',$hrefs,$hrefs2);
 exit;
 
 
