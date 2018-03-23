@@ -14,6 +14,24 @@ define("CURRENT_DIR",dirname(__FILE__));
 
 
 
+
+$prodUrl="https://www.hansgrohe.de/articledetail-metris-select-einhebel-kuechenmischer-320-mit-ausziehauslauf-14884800";
+$prodPage=new Hansgrohe_Product($prodUrl);
+
+
+
+$imgs=$prodPage->getProdImgs();
+$imgs=array_merge($imgs,$prodPage->getProImgsFromOtherSmpProdPage());
+var_dump($imgs);
+exit;
+
+
+
+
+
+
+
+
 $listPageUrls=array(
     'https://www.hansgrohe.de/kueche/produkte',
     'https://www.hansgrohe.de/bad/produkte');
