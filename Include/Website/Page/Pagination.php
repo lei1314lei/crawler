@@ -28,7 +28,7 @@ abstract class Website_Page_Pagination extends Website_Page
             $attr=$this->_nextPageHrefAttr();
             $page = $this->getOtherPagination($selector,$attr);
             return $page;
-        } catch (Website_NoElementException $ex) {
+        } catch (Website_ElementException $ex) {
             //暂时不处理：有可能activePage是最后一页 
         }
     }
@@ -39,7 +39,7 @@ abstract class Website_Page_Pagination extends Website_Page
             $attr=$this->_prevPageHrefAttr();
             $page = $this->getOtherPagination($selector,$attr);
             return $page;
-        } catch (Website_NoElementException $ex) {
+        } catch (Website_ElementException $ex) {
             //暂时不处理：有可能activePage是第一页
         }
     }

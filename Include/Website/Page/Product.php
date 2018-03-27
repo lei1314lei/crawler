@@ -36,7 +36,7 @@ abstract class Website_Page_Product extends Website_Page{
         if(!is_null($exceptedImgCount)){
             if($imgSrcs->count()!==$exceptedImgCount)
             {
-                throw new Exception("Unexcepted amount of img");
+                throw new Website_ElementException("Unexcepted amount of img");
             }
         }
         return $imgSRCs;

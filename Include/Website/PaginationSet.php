@@ -3,6 +3,7 @@
 class Website_PaginationSet
 {
     protected $_activePagination;
+    protected $_allPaginations;
     public function __construct(Website_Page $page) {
         $this->_activePagination=$page;
     }
@@ -11,46 +12,58 @@ class Website_PaginationSet
      */
     public function getAllItems($selector,$attr)
     {
-        return $this->_getAllItemsByMethod("getElesBySelector",$selector,$attr);
+        return $this->_itemsFromAllPaginationByMethod("getElesBySelector",$selector,$attr);
+    }
+    public function getAllPaginations()
+    {
+        if(!isset($this->_allPaginations))
+        {
+            $activePage=$this->_activePagination;
+            $prevPages=$this->_allPrevPages($activePage);
+            $nextPages=$this->_allNextPages($activePage);
+            array_push($prevPages, $activePage);
+            $this->_allPaginations= array_merge($prevPages,$nextPages);
+        }
+        return $this->_allPaginations;
+    }
+    protected function _allPrevPages($pagination)
+    {
+        $pages=array();
+        $page=$pagination->getPrevPage();
+        if($page)
+        {
+            $pages[]=$page;
+            $pages=array_merge($pages,$this->_allPrevPages($page));
+        }
+        return $pages;
+    }
+    protected function _allNextPages($pagination)
+    {
+        $pages=array();
+        $page=$pagination->getNextPage();
+        if($page)
+        {
+            $pages[]=$page;
+            $pages=array_merge($pages,$this->_allNextPages($page));
+        }
+        return $pages;
     }
     /*
      * $method  String  method Belong To Pagination
      */
-    protected function _getAllItemsByMethod($method,$selector,$attr)
+    protected function _itemsFromAllPaginationByMethod($method,$selector,$attr)
     {
-        $items=  call_user_func(array($this->_activePagination,$method), $selector,$attr);
-        $prevItems=$this->_exhaustedItemsFromPrePage($this->_activePagination,$method,$selector,$attr);
-        $nextItems=$this->_exhaustedItemsFromNextPage($this->_activePagination,$method,$selector,$attr);
-        return array_merge($prevItems,$items,$nextItems);
-
-    }
-    protected function _exhaustedItemsFromPrePage(Website_Page_Pagination $activePage,$method,$selector,$attr)
-    {
-        $prePage=$activePage->getPrevPage();
-        if($prePage)
+        $paginations=$this->getAllPaginations();
+        $items=array();
+        foreach($paginations as $$pagination)
         {
-            //$items=$prePage->getAllItemsOnThisPage($selector,$attrName);
-            $items=  call_user_func(array($prePage,$method), $selector,$attr);
-            if($prePage->getPrevPage())
-            {
-                $items=array_merge($items,$this->exhaustedItemsFromPrePage($prePage,$method,$selector,$attr));
-            }
-            return $items;
+            $items=array_merge($items,$this->_getItemsFromPaginationByMethod($pagination,$method,$selector,$attr));
         }
-        return array();
+        return $items;
     }
-    protected function _exhaustedItemsFromNextPage(Website_Page_Pagination $activePage,$method,$selector,$attr)
+    protected function _getItemsFromPaginationByMethod($pagination,$method,$selector,$attr)
     {
-        $nextPage=$activePage->getNextPage();
-        if($nextPage)
-        {
-            $items=call_user_func(array($nextPage,$method), $selector,$attr);
-            if($nextPage->getNextPage())
-            {
-                $items=array_merge($items,$this->exhaustedItemsFromNextPage($nextPage,$method,$selector,$attr));
-            }
-            return $items;
-        }
-        return array();
+        $items=  call_user_func(array($pagination,$method), $selector,$attr);
+        return $items ;
     }
 }

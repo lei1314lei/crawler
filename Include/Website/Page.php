@@ -15,14 +15,35 @@ class Website_Page{
         if(!$pageUrl) throw new Exception('invalid page url');
         $this->_pageUrl=$pageUrl;
     }
-    protected function _getPageDoc()
+    protected function _getDocFromFileCache()
+    {
+        
+    }
+    public function setPageDoc($html)
+    {
+        if(isset($this->_doc))
+        {
+            throw new Exception("Page doc has already been setted.Page URL is".$this->_pageUrl);
+        }
+        $this->_doc=phpQuery::newDocumentHTML($html,$this->_charset);
+        
+        return $this;
+    }
+    /*
+     * return doc or false
+     */
+    public function getPageDoc()
     {
         if(!isset($this->_doc))
         {
-            $html=  @file_get_contents($this->_pageUrl);
+            $html=$this->_getDocFromFileCache();
+            if(empty($html))
+            {
+                $html=  @file_get_contents($this->_pageUrl);
+            }
             if(false===$html)
             {
-                throw new Page_LoadException("load page failed:$this->_pageUrl");
+               return false;
             }
             $this->_doc=phpQuery::newDocumentHTML($html,$this->_charset);
             //phpQuery::selectDocument($doc);
@@ -34,16 +55,16 @@ class Website_Page{
         $extractFailedMsg="can't extract elements by selector:$selector";
         if(!$selector)
         {
-            throw new Exception($extractFailedMsg);
+            throw new Website_ElementException($this,$extractFailedMsg);
         }
-        $doc=$this->_getPageDoc();
-        if(!$doc) throw Exception("page document hasn't been loaded");
+        $doc=$this->getPageDoc();
+        if(false===$doc) throw new Website_ElementException($this,"page document hasn't been loaded");
         phpQuery::selectDocument($doc);
         
         $eles=pq($selector);
         if(false===$eles || $eles->count()==0)
         {
-            throw new Website_NoElementException($extractFailedMsg);
+            throw new Website_ElementException($this,$extractFailedMsg);
         }
         return $eles;
     }
@@ -75,7 +96,7 @@ class Website_Page{
         $eles=$this->_getElements($selector);
         if($eles->count()>1)
         {
-            throw new Exception("there are more than one elements by '$selector'");
+            throw new Website_ElementException("there are more than one elements by '$selector'");
         }
         foreach($eles as $ele)
         {

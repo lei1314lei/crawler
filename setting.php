@@ -6,6 +6,7 @@ define("_LIB_DIR_",dirname(__FILE__).DS."lib".DS);
 define("_PLUGINS_",dirname(__FILE__).DS."plugins".DS);
 define("_INCLUDE_DIR_",dirname(__FILE__)."/include");
 define("_LOG_DIR_",dirname(__FILE__)."/log");
+define("_DOWNLOAD_",dirname(__FILE__)."/download");
 define("DEBUG",true);
 // get current page url
 

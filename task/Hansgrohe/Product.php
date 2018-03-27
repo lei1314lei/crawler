@@ -12,11 +12,6 @@ class Hansgrohe_Product extends Website_Page_Product_Multi
         return ".product-surface.js-surface-selector [href]";
     }
     protected function _imgName() {
-        $title=$this->_getPageTitle();
-        return $title;
-    }
-    protected function _getPageTitle()
-    {
         $title=strip_tags(pq('.page-title')->htmlOuter());
         return trim($title);
     }
