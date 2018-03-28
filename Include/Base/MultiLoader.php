@@ -1,9 +1,9 @@
 <?php 
-class Base_MultiDownloader{ 
+class Base_MultiLoader{ 
    // private $url_list=array(); 
    const  KEY_LOAD_CONTENT='load_content';
    const  KEY_URL='url';
-   const  KEY_FILE_NAME='name';
+   //const  KEY_FILE_NAME='name';
    const  KEY_ERROR='error';
    protected $_targetItems;
    protected $_logger;
@@ -12,10 +12,15 @@ class Base_MultiDownloader{
         CURLOPT_HEADER => 0,//是否需要返回HTTP头 
         CURLOPT_NOBODY => 0,//是否需要返回的内容 
         CURLOPT_FOLLOWLOCATION => 0,//自动跟踪 
-        CURLOPT_TIMEOUT => 6//超时时间(s) 
+        //CURLOPT_TIMEOUT => 1,//超时时间(s) 
     ); 
-    function __construct($seconds=30){ 
-        set_time_limit($seconds); 
+    function __construct($seconds){ 
+        //set_time_limit($seconds); 
+        if($seconds)
+        {
+            $this->_curl_setopt[CURLOPT_TIMEOUT]=$seconds;
+        }
+        set_time_limit($seconds+10); 
     } 
     public function disableSSLVerify()
     {
@@ -25,7 +30,7 @@ class Base_MultiDownloader{
     /* 
      * 
      */ 
-    public function setTargetItems(Array $items,$urlAs=self::KEY_URL){ 
+    public function setItemsToLoad(Array $items,$urlAs=self::KEY_URL){ 
         foreach($items as $i=>$item)
         {
             if(!isset($item[$urlAs])) throw new Exception("Invalid parameter:Lack of Key 'url'");
@@ -40,7 +45,7 @@ class Base_MultiDownloader{
         //$this->url_list=$list; 
         return $this;
     }
-    public function getTargetItems()
+    public function getItemsLoaded()
     {
         return $this->_targetItems;
     }
@@ -73,7 +78,7 @@ class Base_MultiDownloader{
                 $ch{$k} = curl_init();
                 $options[CURLOPT_URL] = $row[self::KEY_URL];
                 $opt = curl_setopt_array($ch{$k}, $options);
-                var_dump($opt);
+                //var_dump($opt);
                 $handles[$k] = $ch{$k};
             }
 
@@ -94,10 +99,11 @@ class Base_MultiDownloader{
             foreach($this->_targetItems as $k=>$row){
                 $this->_targetItems[$k][self::KEY_ERROR] = curl_error($handles[$k]);
                 if(!empty($this->_targetItems[$k][self::KEY_ERROR]))
-                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = '';
-                else
                 {
-                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = curl_multi_getcontent( $handles[$k] );  // get results
+                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = '';
+                }else{
+                    // get results
+                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = curl_multi_getcontent( $handles[$k] );  
                 }
 
 
@@ -108,46 +114,46 @@ class Base_MultiDownloader{
             return $this->_targetItems; // return response
     } 
 
-    public function downloadTo($path,$logFile)
-    {
-        $this->_logger = new log($logFile);
-        $this->execute();
-        $this->_writeFile($path);
-    }
-    protected function _writeFile($path)
-    {
-       
-        foreach($this->_targetItems as $i=>$item)
-        {
-            $fileName=$this->_fileName($i);
-            $fullPath=_DOWNLOAD_.DS.$path.DS.$fileName;
-            $content=$this->_targetItems[$i][self::KEY_LOAD_CONTENT];
-            var_dump($content);
-            if(false===file_put_contents($fullPath, $content))
-            {
-                $data="Fail to Save: {$this->_targetItems[$i][self::KEY_URL]}";
-                
-            }else{
-                $data="Success to Save: {$this->_targetItems[$i][self::KEY_URL]}";
-            }
-            $this->_logger->addRow($data);
-        }
-    }
-    protected function _fileName($i)
-    {
-        $data=$this->_targetItems[$i];
-        $url=$data[self::KEY_URL];
-        $parts=pathinfo($url);
-        $extension=$parts['extension'];
-        if(isset($data[self::KEY_FILE_NAME])  ) 
-        {
-            $filename=$data[self::KEY_FILE_NAME];
-            $pathParts=pathinfo($filename);
-            $filename=$pathParts['filename'].".";
-            return $filename.=isset($pathParts['extension'])?$pathParts['extension']:$extension;
-        }else{
-
-            return $parts['basename'];
-        }
-    }
+//    public function downloadTo($path,$logFile)
+//    {
+//        $this->_logger = new log($logFile);
+//        $this->execute();
+//        $this->_writeFile($path);
+//    }
+//    protected function _writeFile($path)
+//    {
+//       
+//        foreach($this->_targetItems as $i=>$item)
+//        {
+//            $fileName=$this->_fileName($i);
+//            $fullPath=_DOWNLOAD_.DS.$path.DS.$fileName;
+//            $content=$this->_targetItems[$i][self::KEY_LOAD_CONTENT];
+//            var_dump($content);
+//            if(false===file_put_contents($fullPath, $content))
+//            {
+//                $data="Fail to Save: {$this->_targetItems[$i][self::KEY_URL]}";
+//                
+//            }else{
+//                $data="Success to Save: {$this->_targetItems[$i][self::KEY_URL]}";
+//            }
+//            $this->_logger->addRow($data);
+//        }
+//    }
+//    protected function _fileName($i)
+//    {
+//        $data=$this->_targetItems[$i];
+//        $url=$data[self::KEY_URL];
+//        $parts=pathinfo($url);
+//        $extension=$parts['extension'];
+//        if(isset($data[self::KEY_FILE_NAME])  ) 
+//        {
+//            $filename=$data[self::KEY_FILE_NAME];
+//            $pathParts=pathinfo($filename);
+//            $filename=$pathParts['filename'].".";
+//            return $filename.=isset($pathParts['extension'])?$pathParts['extension']:$extension;
+//        }else{
+//
+//            return $parts['basename'];
+//        }
+//    }
 } 

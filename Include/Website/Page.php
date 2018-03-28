@@ -14,6 +14,10 @@ class Website_Page{
         return $this->_pageUrl;
     }
     public function __construct($pageUrl,$siteCode) {
+        if('https://www.hansgrohe.de/articledetail-metris-select-einhebel-kuechenmischer-320-mit-ausziehauslauf-14884000'==$pageUrl)
+        {
+            $debug=true;
+        }
         if(!$pageUrl) throw new Exception('invalid page url');
         $this->_pageUrl=$pageUrl;
         $this->_siteCode=$siteCode;

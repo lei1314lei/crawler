@@ -33,8 +33,8 @@ $img_2=array(
         'name' =>  'Metris--_2',
         ),
 );
-$downloader=new Base_MultiDownloader();
-$downloader->setTargetItems($img_2, 'src')
+$downloader=new Base_MultiLoader();
+$downloader->setItemsToLoad($img_2, 'src')
         ->disableSSLVerify();
 $downloader->downloadTo("hansgrohe", "hansgrohe.log");exit;
 

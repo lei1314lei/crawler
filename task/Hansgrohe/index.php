@@ -3,36 +3,44 @@ $include="../../EnvInit.php";
 include_once $include;
 
 
+        $action=new Hansgrohe_Action_DownloadAllProductsPage();
+        $action->execute(false);exit;
 
-$prodsUrlItems=array(
-    array('url'=>"https://www.hansgrohe.de/articledetail-logis-einhebel-kuechenmischer-120-coolstart-71837000"),
-   // array('url'=>"https://www.hansgrohe.de/articledetail-logis-classic-2-griff-kuechenmischer-wandmontage-highspout-71286000"),
-    
-);
-$cachedProdPages=array();
-foreach($prodsUrlItems as $key=>$item)
-{
-    $prodPage=new Hansgrohe_Product($item['url']);
-    if($prodPage->isCached())
-    {
-        $cachedProdPages[$key]=$prodPage;
-        unset($prodsUrlItems[$key]);
-    }
-}
 
-$downloader=new Base_MultiDownloader();
-$downloader->setTargetItems($prodsUrlItems)
-        ->disableSSLVerify();
-$downloader->execute();
-$items=$downloader->getTargetItems();
+        $action=new Hansgrohe_Action_ExtractAllProdsImgInfo();
+        $action->execute();
+        exit;
 
-$prodPages=array();
-foreach($items as $item)
-{
-    $prodPage=new Hansgrohe_Product($item[Base_MultiDownloader::KEY_URL]);
-    $prodPage->setPageDoc($item[Base_MultiDownloader::KEY_LOAD_CONTENT]);
-    $prodPages[]=$prodPage;
-}
+
+$action=new Hansgrohe_Action_ExtractProdUrl();
+$infoes=$action->execute();
+var_dump($infoes);exit;
+
+//$cateogryUrls=array(
+//    'https://www.hansgrohe.de/kueche/produkte',
+//    'https://www.hansgrohe.de/bad/produkte'
+//    );
+//$categoryUrl= 'https://www.hansgrohe.de/kueche/produkte';
+
+
+
+
+//foreach($cateogryUrls as $categoryUrl)
+//{
+//    $prodsUrlInfo=getProdsUrlInfo($categoryUrl);
+//    var_dump($prodsUrlInfo);
+//}
+
+
+
+
+exit;
+
+
+
+
+
+
 var_dump(count($prodPages));
 
 var_dump(count($cachedProdPages));
@@ -89,7 +97,7 @@ $img_2=array(
         'name' =>  'Metris--_2',
         ),
 );
-$downloader=new Base_MultiDownloader();
-$downloader->setTargetItems($img_2, 'src')
+$downloader=new Base_MultiLoader();
+$downloader->setItemsToLoad($img_2, 'src')
         ->disableSSLVerify();
 $downloader->downloadTo("hansgrohe", "hansgrohe.log");exit;

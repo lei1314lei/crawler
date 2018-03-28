@@ -7,6 +7,7 @@
  */
 class Shell  {
 
+    protected $_cmds;
     protected  $_args;
     /**
      * Initialize application and parse input parameters
@@ -20,26 +21,35 @@ class Shell  {
 
     protected function _parseArgs()
     {
-        $current = null;
+        $cmd = null;
         foreach ($_SERVER['argv'] as $arg) {
             $match = array();
             if (preg_match('#^--([\w\d_-]{1,})$#', $arg, $match) || preg_match('#^-([\w\d_]{1,})$#', $arg, $match)) {
-                $current = $match[1];
-                $this->_args[$current] = true;
+                $cmd = $match[1];
+                $this->_cmds[$cmd]=true;
             } else {
-                if ($current) {
-                    $this->_args[$current] = $arg;
-                } else if (preg_match('#^([\w\d_]{1,})$#', $arg, $match)) {
-                    $this->_args[$match[1]] = true;
-                }
+                if ($cmd) {
+                    $this->_args[$cmd][] = $arg;
+                } 
             }
         }
         return $this;
     }
 
-    public function getVar($var) {
-        return isset($this->_args[$var]) ? $this->_args[$var] : false;
+    public function getCmd($cmd)
+    {
+        return isset($this->_cmds[$cmd]) ? $this->_cmds[$cmd] : false;
     }
+    public function getParams($cmd)
+    {
+        if(isset($this->_args[$cmd]))
+        {
+            $params=$this->_args[$cmd];
+            return $params;
+        }
+        return array();
+    }
+
     /**
      * Validate arguments
      *
