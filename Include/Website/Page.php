@@ -1,23 +1,60 @@
 <?php
 
 class Website_Page{
+    protected $_cache;
+    protected $_siteCode;
     protected $_pageUrl;
     protected $_doc;
     protected $_charset="utf-8";
     const DATA_FROM='data-from';
 
-
+    
     public function getPageUrl()
     {
         return $this->_pageUrl;
     }
-    public function __construct($pageUrl) {
+    public function __construct($pageUrl,$siteCode) {
         if(!$pageUrl) throw new Exception('invalid page url');
         $this->_pageUrl=$pageUrl;
+        $this->_siteCode=$siteCode;
     }
-    protected function _getDocFromFileCache()
+    static public function cacheKey($pageUrl)
     {
-        
+            return MD5($pageUrl);
+    }
+    public function isCached()
+    {
+        $cacheObj=$this->_getCache();
+        $cacheKey=self::cacheKey($this->_pageUrl,$this->_siteCode);
+        return $cacheObj->isCached($cacheKey);
+    }
+    protected function _getCache()
+    {
+        if(!isset($this->_cache))
+        {
+            $this->_cache=new Base_Cache_File($this->_siteCode,Base_Cache_File::FILE_TYPE_HTML);
+        }
+        return $this->_cache;
+    }
+    protected function _getPageCache()
+    {
+        $cacheObj=$this->_getCache();
+        $cacheKey=self::cacheKey($this->_pageUrl,$this->_siteCode);
+       if($cacheObj->isCached($cacheKey))
+       {   
+           return $cacheObj->getCache($cacheKey);
+       }else{
+           return '';
+       }
+    }
+    protected function _setPageCache($html)
+    {
+        if($html)
+        {
+            $cacheObj=$this->_getCache();
+            $cacheKey=self::cacheKey($this->_pageUrl,$this->_siteCode);
+            $cacheObj->saveCache($cacheKey,$html);
+        }
     }
     public function setPageDoc($html)
     {
@@ -25,6 +62,7 @@ class Website_Page{
         {
             throw new Exception("Page doc has already been setted.Page URL is".$this->_pageUrl);
         }
+        $this->_setPageCache($html);
         $this->_doc=phpQuery::newDocumentHTML($html,$this->_charset);
         
         return $this;
@@ -36,7 +74,7 @@ class Website_Page{
     {
         if(!isset($this->_doc))
         {
-            $html=$this->_getDocFromFileCache();
+            $html=$this->_getPageCache();
             if(empty($html))
             {
                 $html=  @file_get_contents($this->_pageUrl);
@@ -45,7 +83,8 @@ class Website_Page{
             {
                return false;
             }
-            $this->_doc=phpQuery::newDocumentHTML($html,$this->_charset);
+            $this->setPageDoc($html);
+           // $this->_doc=phpQuery::newDocumentHTML($html,$this->_charset);
             //phpQuery::selectDocument($doc);
         }
         return $this->_doc;

@@ -39,7 +39,11 @@ class Base_MultiDownloader{
         $this->_targetItems=$items;
         //$this->url_list=$list; 
         return $this;
-    } 
+    }
+    public function getTargetItems()
+    {
+        return $this->_targetItems;
+    }
     /* 
      * 设置参数 
      * @cutPot array 
@@ -50,117 +54,64 @@ class Base_MultiDownloader{
     /* 
      * @return array 
      */ 
- function _execute($options=""){
+    public function execute($options=""){
 
-         if(count($this->_targetItems)<=0) return False;
+            if(count($this->_targetItems)<=0) return False;
 
-         $handles = array();
+            $handles = array();
 
-         if(!$options) // add default options
-//             $options = array(
-//                 CURLOPT_HEADER=>0,
-//                 CURLOPT_RETURNTRANSFER=>1,
-//                 
-//             );
-             $options=$this->_curl_setopt;
+            if(!$options) // add default options
+   //             $options = array(
+   //                 CURLOPT_HEADER=>0,
+   //                 CURLOPT_RETURNTRANSFER=>1,
+   //                 
+   //             );
+                $options=$this->_curl_setopt;
 
-         // add curl options to each handle
-         foreach($this->_targetItems as $k=>$row){
-             $ch{$k} = curl_init();
-             $options[CURLOPT_URL] = $row[self::KEY_URL];
-             $opt = curl_setopt_array($ch{$k}, $options);
-             var_dump($opt);
-             $handles[$k] = $ch{$k};
-         }
+            // add curl options to each handle
+            foreach($this->_targetItems as $k=>$row){
+                $ch{$k} = curl_init();
+                $options[CURLOPT_URL] = $row[self::KEY_URL];
+                $opt = curl_setopt_array($ch{$k}, $options);
+                var_dump($opt);
+                $handles[$k] = $ch{$k};
+            }
 
-         $mh = curl_multi_init();
+            $mh = curl_multi_init();
 
-         // add handles
-         foreach($handles as $k => $handle){
-             $err = curl_multi_add_handle($mh, $handle);            
-         }
+            // add handles
+            foreach($handles as $k => $handle){
+                $err = curl_multi_add_handle($mh, $handle);            
+            }
 
-         $running_handles = null;
+            $running_handles = null;
 
-         do {
-           curl_multi_exec($mh, $running_handles);
-           curl_multi_select($mh);
-         } while ($running_handles > 0);
-        
-         foreach($this->_targetItems as $k=>$row){
-             $this->_targetItems[$k][self::KEY_ERROR] = curl_error($handles[$k]);
-             if(!empty($this->_targetItems[$k][self::KEY_ERROR]))
-                 $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = '';
-             else
-             {
-                 $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = curl_multi_getcontent( $handles[$k] );  // get results
-             }
-                 
+            do {
+              curl_multi_exec($mh, $running_handles);
+              curl_multi_select($mh);
+            } while ($running_handles > 0);
 
-             // close current handler
-             curl_multi_remove_handle($mh, $handles[$k] );
-         }
-         curl_multi_close($mh);
-         return $this->_targetItems; // return response
- } 
-//    function _execute( $options=""){
-//
-//             if(count($this->_targetItems)<=0) throw new Exception("Didn't set items that need to be downloaded");
-//
-//             $handles = array();
-//
-//             if(!$options) // add default options
-//                 $options = array(
-//                     CURLOPT_HEADER=>0,
-//                     CURLOPT_RETURNTRANSFER=>1,
-//                 );
-//
-//             // add curl options to each handle
-//             foreach($this->_targetItems as $k=>$row){
-//                 $ch{$k} = curl_init();
-//                 $options[CURLOPT_URL] = $row['url'];
-//                 $opt = curl_setopt_array($ch{$k}, $options);
-//                 $handles[$k] = $ch{$k};
-//             }
-//
-//             $mh = curl_multi_init();
-//
-//             // add handles
-//             foreach($handles as $k => $handle){
-//                 $err = curl_multi_add_handle($mh, $handle);            
-//             }
-//
-//             $running_handles = null;
-//
-//             do {
-//               curl_multi_exec($mh, $running_handles);
-//               curl_multi_select($mh);
-//             } while ($running_handles > 0);
-//
-//             foreach($this->_targetItems as $k=>$row){
-//                 //$this->_targetItems[$k]['error'] = curl_error($handles[$k]);
-//                 $errorMsg=curl_error($handles[$k]);
-//                 if(!$errorMsg)
-//                 {
-//                     // $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = '';
-//                     $errorData="Load Error:$errorMsg \r\n {$this->_targetItems[$k][self::KEY_URL]}";
-//                     $this->_logger->addRow($errorData);
-//                     unset($this->_targetItems[$k]);
-//                 }else
-//                 {
-//                     $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = curl_multi_getcontent( $handles[$k] );  // get results
-//                 }
-//                     
-//                 // close current handler
-//                 curl_multi_remove_handle($mh, $handles[$k] );
-//             }
-//             curl_multi_close($mh); 
-//             return $this->_targetItems; // return response
-//     }
+            foreach($this->_targetItems as $k=>$row){
+                $this->_targetItems[$k][self::KEY_ERROR] = curl_error($handles[$k]);
+                if(!empty($this->_targetItems[$k][self::KEY_ERROR]))
+                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = '';
+                else
+                {
+                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = curl_multi_getcontent( $handles[$k] );  // get results
+                }
+
+
+                // close current handler
+                curl_multi_remove_handle($mh, $handles[$k] );
+            }
+            curl_multi_close($mh);
+            return $this->_targetItems; // return response
+    } 
+
     public function downloadTo($path,$logFile)
     {
         $this->_logger = new log($logFile);
-        $this->_execute();
+        $this->execute();
         $this->_writeFile($path);
     }
     protected function _writeFile($path)

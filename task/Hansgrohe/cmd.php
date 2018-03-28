@@ -1,7 +1,8 @@
 <?php
-$setting='../setting.php';
-var_dump(realpath($setting));
-include_once $setting;
+include_once "../EnvInit";
+//$setting='../setting.php';
+//var_dump(realpath($setting));
+//include_once $setting;
 class DownloadProductImg_Shell extends Shell{
 
     public function run() {

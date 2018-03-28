@@ -1,15 +1,13 @@
 <?php
 
 
-define("_BASE_DIR_",dirname(dirname(dirname(__FILE__))));
+
 require_once (_BASE_DIR_."/setting.php");
 
 $include_path[]= realpath(dirname(dirname(__FILE__)));
 set_include_path(implode(PS,$include_path) .PS.get_include_path());
 
-define("_DATA_DIR_",dirname(__FILE__).DS."data");
-define("DATA_DOWNLOAD_DIR",dirname(__FILE__).DS."download");
-define("CURRENT_DIR",dirname(__FILE__));
+
 
 //$filename=_LOG_DIR_.DS."hansgrohe_prodUrl.log";
 //$handle = @fopen($filename, "r");
@@ -35,7 +33,11 @@ $hnsgrhImgInfoSuccessLogger=new log("hansgrohe_imgInfo.log");
 $hnsgrhImgInfoFailLogger=new log("hansgrohe_imgInfo_failed.log");
 
 
-
+$prodUrl="https://www.hansgrohe.de/articledetail-logis-einhebel-kuechenmischer-120-coolstart-71837000";
+$prodPage=new Hansgrohe_Product($prodUrl);
+$prodPage->sitecode="Hansgrohe";
+$prodPage->getPageDoc(); exit;
+//$prodPage->setPageDoc($html);
 
 
 
@@ -81,6 +83,7 @@ $imgsInfo=array();
 foreach($prodsUrl as $prodUrl)
 {
     $prodPage=new Hansgrohe_Product($prodUrl);
+    $prodPage->siteCode="Hansgrohe";
     try{
         $imgInfos=$prodPage->getProdImgs();
         $otherSmpImgsInfos=$prodPage->getProImgsFromOtherSmpProdPage();

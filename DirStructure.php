@@ -1,0 +1,13 @@
+<?php
+define("DS",DIRECTORY_SEPARATOR);
+define("PS",PATH_SEPARATOR);
+define("_LIB_DIR_",dirname(__FILE__).DS."lib".DS);
+define("_PLUGINS_",dirname(__FILE__).DS."plugins".DS);
+define("_INCLUDE_DIR_",dirname(__FILE__)."/include");
+define("_LOG_DIR_",dirname(__FILE__)."/log");
+define("_DOWNLOAD_",dirname(__FILE__)."/download");
+define("_BASE_DIR_",dirname(dirname(dirname(__FILE__))));
+define("_DATA_DIR_",dirname(__FILE__).DS."data");
+define("DATA_DOWNLOAD_DIR",dirname(__FILE__).DS."download");
+define("CURRENT_DIR",dirname(__FILE__));
+define("_CACHE_DIR_",dirname(__FILE__).DS."var".DS.'cache');
