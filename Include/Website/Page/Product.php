@@ -1,9 +1,12 @@
 <?php
 
 abstract class Website_Page_Product extends Website_Page{
+    const DATA_ADDITION_IMG_NAME="imgName";
+    const DATA_PROD_IMG="src";
+    
     abstract protected function _imgName();
-    abstract protected function _imgSelector();
-    public function getProdImgs($exceptedImgCount=null)
+    abstract public function imgSelector();
+    public function getProdImgsInfo($exceptedImgCount=null)
     {
         $srcs=$this->_getImgSRCs($exceptedImgCount);
         $name=$this->_imgName();
@@ -13,14 +16,16 @@ abstract class Website_Page_Product extends Website_Page{
             foreach($srcs as $src)
             {
                 $timer++;
-                $info['src']=$src;
-                $info['name']=$name.'_'.$timer;
+                $info[self::DATA_PROD_IMG]=$src;
+                $info[self::DATA_ADDITION_IMG_NAME]=$name.'_'.$timer;
             }
         }else{
-            $info['src']=array_pop($srcs);
-            $info['name']=$name;
+            $info[self::DATA_PROD_IMG]=array_pop($srcs);
+            $info[self::DATA_ADDITION_IMG_NAME]=$name;
+            
         }
-        $info[Website_Page::DATA_FROM]=$this->_pageUrl;
+        $info[self::DATA_ADDITION_SELECTOR]=$this->imgSelector();
+        $info[self::DATA_ADDITION_FROM_PAGE]=$this->_pageUrl;
         $infos[]=$info;
         return $infos;
     }
@@ -31,12 +36,12 @@ abstract class Website_Page_Product extends Website_Page{
     protected function _getImgSRCs($exceptedImgCount)
     {
         $srcAttr=$this->_getAttrSrcName();
-        $imgSelector=$this->_imgSelector();
+        $imgSelector=$this->imgSelector();
         $imgSRCs=$this->getElesBySelector($imgSelector, $srcAttr);
         if(!is_null($exceptedImgCount)){
             if($imgSrcs->count()!==$exceptedImgCount)
             {
-                throw new Website_ElementException("Unexcepted amount of img");
+                throw new Website_ElementException($this,$imgSelector,"Unexcepted amount of img");
             }
         }
         return $imgSRCs;

@@ -6,18 +6,24 @@ class Website_Page{
     protected $_pageUrl;
     protected $_doc;
     protected $_charset="utf-8";
-    const DATA_FROM='data-from';
+    const DATA_ADDITION_FROM_PAGE='from-page';
+    const DATA_ADDITION_SELECTOR='selector';
+    const DATA_ADDITION_ATTR='attrName';
 
-    
+//    protected function _withAddition(Array $data)
+//    {
+//        $data[Website_Page::DATA_ADDITION_FROM_PAGE]=$this->_pageUrl;
+//        return $data;
+//    }
     public function getPageUrl()
     {
         return $this->_pageUrl;
     }
+    public function setPageCode($code)
+    {
+        $this->_siteCode=$code;
+    }
     public function __construct($pageUrl,$siteCode) {
-        if('https://www.hansgrohe.de/articledetail-metris-select-einhebel-kuechenmischer-320-mit-ausziehauslauf-14884000'==$pageUrl)
-        {
-            $debug=true;
-        }
         if(!$pageUrl) throw new Exception('invalid page url');
         $this->_pageUrl=$pageUrl;
         $this->_siteCode=$siteCode;
@@ -98,16 +104,16 @@ class Website_Page{
         $extractFailedMsg="can't extract elements by selector:$selector";
         if(!$selector)
         {
-            throw new Website_ElementException($this,$extractFailedMsg);
+            throw new Website_ElementException($this,$selector,$extractFailedMsg);
         }
         $doc=$this->getPageDoc();
-        if(false===$doc) throw new Website_ElementException($this,"page document hasn't been loaded");
+        if(false===$doc) throw new Website_ElementException($this,$selector,"page document hasn't been loaded");
         phpQuery::selectDocument($doc);
         
         $eles=pq($selector);
         if(false===$eles || $eles->count()==0)
         {
-            throw new Website_ElementException($this,$extractFailedMsg);
+            throw new Website_ElementException($this,$selector,$extractFailedMsg);
         }
         return $eles;
     }
@@ -139,7 +145,7 @@ class Website_Page{
         $eles=$this->_getElements($selector);
         if($eles->count()>1)
         {
-            throw new Website_ElementException("there are more than one elements by '$selector'");
+            throw new Website_ElementException($this,$selector,"there are more than one elements by '$selector'");
         }
         foreach($eles as $ele)
         {

@@ -3,8 +3,27 @@ $include="../../EnvInit.php";
 include_once $include;
 
 
-        $action=new Hansgrohe_Action_DownloadAllProductsPage();
-        $action->execute(false);exit;
+//$eleExLogger=new Base_Logger_Crawler('test.log');
+//$page=new Website_Page('http://test.com','test');
+//$selector='#haha-';
+//$message="this is a test program";
+//$ex=new Website_ElementException($page, $selector, $message);
+//$eleExLogger->logEx($ex);exit;
+
+
+            $action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
+            $action->execute(true);exit;
+
+$action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
+$action->execute();exit;
+
+
+$timer=time();
+//set_time_limit(60);
+            $action=new Hansgrohe_Action_DownloadAllProductsPage1();
+            $action->execute(true);
+           var_dump((time()-$timer)/1000); 
+            exit;
 
 
         $action=new Hansgrohe_Action_ExtractAllProdsImgInfo();
@@ -47,7 +66,7 @@ var_dump(count($cachedProdPages));
 
 foreach($cachedProdPages as $prodPage)
 {
-    var_dump($prodPage->getProdImgs());
+    var_dump($prodPage->getProdImgsInfo());
 }
 
 
@@ -66,8 +85,8 @@ foreach($prodsUrl as $prodUrl)
 {
     $prodPage=new Hansgrohe_Product($prodUrl);
     try{
-        $imgInfos=$prodPage->getProdImgs();
-        $otherSmpImgsInfos=$prodPage->getProImgsFromOtherSmpProdPage();
+        $imgInfos=$prodPage->getProdImgsInfo();
+        $otherSmpImgsInfos=$prodPage->getProImgsInfoFromOtherSmpProdPage();
         
         $imgsInfo=array_merge($imgsInfo,$imgInfos,$otherSmpImgsInfos);
         $hnsgrhImgInfoSuccessLogger->addRow(json_encode($imgInfos));

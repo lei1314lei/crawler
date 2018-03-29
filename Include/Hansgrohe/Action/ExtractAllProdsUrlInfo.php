@@ -2,8 +2,11 @@
 
 class Hansgrohe_Action_ExtractAllProdsUrlInfo
 {
-    protected $_hnsgrhProdUrlSuccessLogger;
-    protected $_hnsgrhProdUrlFailLogger;
+    const LOG_FILE_FAILED="hansgrohe_prodUrl_failed.log";
+    const LOG_FILE_SUCCESS="hansgrohe_prodUrl.log";
+
+    protected $_successLogger;
+    protected $_failLogger;
     protected $_exceptionLoger;
     public function execute($print=false)
     {
@@ -21,14 +24,14 @@ class Hansgrohe_Action_ExtractAllProdsUrlInfo
     }
     protected function _initLogger()
     {
-        $this->_hnsgrhProdUrlSuccessLogger =new log("hansgrohe_prodUrl.log");
-        $this->_hnsgrhProdUrlFailLogger=new log("hansgrohe_prodUrl_failed.log");
+        $this->_successLogger =new Base_Logger_Crawler(self::LOG_FILE_SUCCESS);
+        $this->_failLogger=new Base_Logger_Crawler(self::LOG_FILE_FAILED);
         $this->_exceptionLoger=new Base_ExceptionLogger('exception.log');
     }
     protected function _getProdsUrlInfo($categoryUrl,$print)
     {
 
-        static $timer=0;
+        
         $hnsgrhImgInfoSuccessLogger=new log("hansgrohe_imgInfo.log");
         $hnsgrhImgInfoFailLogger=new log("hansgrohe_imgInfo_failed.log");
 
@@ -42,29 +45,38 @@ class Hansgrohe_Action_ExtractAllProdsUrlInfo
         foreach($paginations as $categoryPagination)
         {
             try{
-                $selector=$categoryPagination->prodLinkSelector();
-                $attr=$categoryPagination->getHrefAttr();
-                $infos=$categoryPagination->getProdsUrlInfo($selector,$attr);
+//                $selector=$categoryPagination->prodLinkSelector();
+//                $attr=$categoryPagination->getHrefAttr();
+//                $infos=$categoryPagination->getProdsUrlInfo($selector,$attr);
+                $infos=$categoryPagination->getProdsUrlInfo();
+                $this->_logSuccessItems($infos);
+                
+                $prodsUrlInfo=  array_merge($prodsUrlInfo,$infos);
+                static $timer=0;
                 $timer++;
+                $msg= "Success to extract product url from pagination($timer)";
                 if($print)
                 {
-                    echo "Success to extract product url from pagination($timer) \r\n";
+                    echo $msg."\r\n";
                 }
-                $this->_hnsgrhProdUrlSuccessLogger->addRow(json_encode($infos)."\r\n");  
             } catch (Website_ElementException $ex) {
-                $page=$ex->getObject();
-                $msg="pagination failed to get product urls.";
-                $error=array("msg"=>$msg,"page-url"=>$page->getPageUrl());
-                $this->_hnsgrhProdUrlFailLogger->addRow($msg);
+                $this->_failLogger->logEx($ex);
                 continue;
             }catch(Exception $ex){
                 $this->_exceptionLoger->record($ex);
             }
-            $prodsUrlInfo=  array_merge($prodsUrlInfo,$infos);
+            
+            
         }
-        
-        
-        
         return $prodsUrlInfo;
+    }
+    
+    protected function _logSuccessItems($prodsUrlInfo)
+    {
+        foreach($prodsUrlInfo as $prodUrlInfo)
+        {
+            $prodUrl=$prodUrlInfo[Website_Page_Pagination_Category::DATA_PROD_URL];
+            $this->_successLogger->addRow(Base_Logger_Crawler::key($prodUrl),$prodUrlInfo);
+        }
     }
 }

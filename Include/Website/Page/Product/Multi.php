@@ -9,7 +9,7 @@ abstract class Website_Page_Product_Multi  extends Website_Page_Product{
 //    {
 //        
 //    }
-//    public function getProImgsFromOtherSmpProdPage()
+//    public function getProImgsInfoFromOtherSmpProdPage()
 //    {
 //        
 //    }
@@ -56,9 +56,9 @@ abstract class Website_Page_Product_Multi  extends Website_Page_Product{
         return "href";
     }
 
-    public function getProImgsFromOtherSmpProdPage()
+    public function getProImgsInfoFromOtherSmpProdPage()
     {
-        $imgs=array();
+        $imgsInfo=array();
         if($this->hasOtherSimpleProds())
         {
             $prodUrls=$this->getOtherSmpProdUrls();
@@ -66,10 +66,10 @@ abstract class Website_Page_Product_Multi  extends Website_Page_Product{
             {
                 $class=get_class($this);
                 $prodPage=new $class($prodUrl);
-                $imgs=  array_merge($imgs,$prodPage->getProdImgs());
+                $imgsInfo=  array_merge($imgsInfo,$prodPage->getProdImgsInfo());
             }
         }
-        return $imgs;
+        return $imgsInfo;
     }
 
 }

@@ -1,7 +1,7 @@
 <?php 
 class Base_MultiLoader{ 
    // private $url_list=array(); 
-   const  KEY_LOAD_CONTENT='load_content';
+   const  KEY_LOADED_CONTENT='load_content';
    const  KEY_URL='url';
    //const  KEY_FILE_NAME='name';
    const  KEY_ERROR='error';
@@ -14,13 +14,13 @@ class Base_MultiLoader{
         CURLOPT_FOLLOWLOCATION => 0,//自动跟踪 
         //CURLOPT_TIMEOUT => 1,//超时时间(s) 
     ); 
-    function __construct($seconds){ 
+    function __construct($seconds=null){ 
         //set_time_limit($seconds); 
         if($seconds)
         {
             $this->_curl_setopt[CURLOPT_TIMEOUT]=$seconds;
+            set_time_limit($seconds+10); 
         }
-        set_time_limit($seconds+10); 
     } 
     public function disableSSLVerify()
     {
@@ -56,6 +56,10 @@ class Base_MultiLoader{
     protected function _setOpt($cutPot){ 
         $this->_curl_setopt=$cutPot+$this->_curl_setopt; 
     } 
+    static public function isItemLoadedSucess(Array $item)
+    {
+        return isset($item[self::KEY_LOADED_CONTENT])?true:false;
+    }
     /* 
      * @return array 
      */ 
@@ -100,10 +104,10 @@ class Base_MultiLoader{
                 $this->_targetItems[$k][self::KEY_ERROR] = curl_error($handles[$k]);
                 if(!empty($this->_targetItems[$k][self::KEY_ERROR]))
                 {
-                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = '';
+                   // $this->_targetItems[$k][self::KEY_LOADED_CONTENT]  = '';
                 }else{
                     // get results
-                    $this->_targetItems[$k][self::KEY_LOAD_CONTENT]  = curl_multi_getcontent( $handles[$k] );  
+                    $this->_targetItems[$k][self::KEY_LOADED_CONTENT]  = curl_multi_getcontent( $handles[$k] );  
                 }
 
 
@@ -127,7 +131,7 @@ class Base_MultiLoader{
 //        {
 //            $fileName=$this->_fileName($i);
 //            $fullPath=_DOWNLOAD_.DS.$path.DS.$fileName;
-//            $content=$this->_targetItems[$i][self::KEY_LOAD_CONTENT];
+//            $content=$this->_targetItems[$i][self::KEY_LOADED_CONTENT];
 //            var_dump($content);
 //            if(false===file_put_contents($fullPath, $content))
 //            {

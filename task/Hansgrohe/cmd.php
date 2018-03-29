@@ -17,17 +17,35 @@ class DownloadProductImg_Shell extends Shell{
             }
         }
     }
-
-    public function downloadPage($url='ALL')
+    public function extractProdsImgInfo($prodUrl='ALL')
+    {
+        if('ALL'==$prodUrl)
+        {
+            $action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
+            $action->execute(true);
+        }else{
+            $page = new Hansgrohe_Product($url);
+            $imgsInfo=$page->getProdImgsInfo();
+            $imgsInfo=  array_merge($imgsInfo,$page->getProImgsInfoFromOtherSmpProdPage());
+            foreach($imgsInfo as $imgInfo)
+            {
+                var_dump($imgInfo);
+            }
+        }
+        
+    }
+    
+    public function downloadProdPage($url='ALL')
     {
        if("ALL"===$url)
        {
-           var_dump('ALL');exit;
+         //  var_dump('ALL');exit;
             $action=new Hansgrohe_Action_DownloadAllProductsPage();
-            $action->execute(true);
+           // $action->execute(true);
+            $action->tmp(true);
        }else{
-           var_dump($url);exit;
-            $page = new Website_Page($url,'Hansgrohe');
+        //   var_dump($url);exit;
+            $page = new Hansgrohe_Product($url);
             if(false!==$page->getPageDoc())
             {
                 echo "Success to download page.  \r\n The key for cache is ".website_page::cacheKey($url);

@@ -3,10 +3,9 @@
 class Hansgrohe_Product extends Website_Page_Product_Multi
 {
     public function __construct($pageUrl) {
-        $siteCode="Hansgrohe";
-        parent::__construct($pageUrl, $siteCode);
+        parent::__construct($pageUrl, "Hansgrohe");
     }
-    protected function _imgSelector() {
+    public function imgSelector() {
         return ".product-images__image img";
     }
     protected function _getAttrSrcName(){

@@ -17,8 +17,8 @@ define("CURRENT_DIR",dirname(__FILE__));
 //
 //
 //
-//$imgs_1=$prodPage->getProdImgs();
-//$imgs_2=array_merge($imgs_1,$prodPage->getProImgsFromOtherSmpProdPage());
+//$imgs_1=$prodPage->getProdImgsInfo();
+//$imgs_2=array_merge($imgs_1,$prodPage->getProImgsInfoFromOtherSmpProdPage());
 //var_dump($imgs_1,$imgs_2);
 
 

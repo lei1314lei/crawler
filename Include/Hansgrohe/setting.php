@@ -85,8 +85,8 @@ foreach($prodsUrl as $prodUrl)
     $prodPage=new Hansgrohe_Product($prodUrl);
     $prodPage->siteCode="Hansgrohe";
     try{
-        $imgInfos=$prodPage->getProdImgs();
-        $otherSmpImgsInfos=$prodPage->getProImgsFromOtherSmpProdPage();
+        $imgInfos=$prodPage->getProdImgsInfo();
+        $otherSmpImgsInfos=$prodPage->getProImgsInfoFromOtherSmpProdPage();
         
         $imgsInfo=array_merge($imgsInfo,$imgInfos,$otherSmpImgsInfos);
         $hnsgrhImgInfoSuccessLogger->addRow(json_encode($imgInfos));
