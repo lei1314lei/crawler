@@ -3,9 +3,11 @@
 abstract class Website_Page_Product extends Website_Page{
     const DATA_ADDITION_IMG_NAME="imgName";
     const DATA_PROD_IMG="src";
+    const DATA_PROD_ID='prodId';
    // const IMG_NAME_SEPARATOR="_";
     abstract protected function _imgName($i);
     abstract public function imgSelector();
+    abstract public function getProductId();
     public function getProdImgsInfo($exceptedImgCount=null)
     {
         $srcs=$this->_getImgSRCs($exceptedImgCount);
@@ -15,9 +17,8 @@ abstract class Website_Page_Product extends Website_Page{
             $timer++;
             $info[self::DATA_PROD_IMG]=$src;
             $info[self::DATA_ADDITION_IMG_NAME]=$this->_imgName($i);
+            $info[self::DATA_PROD_ID]=$this->getProductId();
         }
-        
-//        $prodId=$this->prodId();
 //        $srcs=$this->_getImgSRCs($exceptedImgCount);
 //        $name=$this->_imgName();
 //        $timer=0;

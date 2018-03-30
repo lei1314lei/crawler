@@ -33,8 +33,7 @@ class Hansgrohe_Action_ExtractAllProdsUrlInfo
     {
         $this->_successLogger=null;
         $this->_failLogger=null;
-        $this->_exceptionLoger;
-        
+        $this->_exceptionLoger=null;
     }
     protected function _getProdsUrlInfo($categoryUrl,$print)
     {

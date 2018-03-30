@@ -28,10 +28,10 @@ class Hansgrohe_Product extends Website_Page_Product_Multi
     protected function _simpleProdEleSelector() {
         return ".product-surface.js-surface-selector [href]";
     }
-    static public function decodeProdImgName($encodedName)
-    {
-        return urldecode($encodedName);
-    }
+//    static public function decodeProdImgName($encodedName)
+//    {
+//        return urldecode($encodedName);
+//    }
     protected function _imgName($i) {
         $trackData=$this->getDataTrack();
         if(!isset($trackData['id']))//product id
@@ -41,19 +41,20 @@ class Hansgrohe_Product extends Website_Page_Product_Multi
         }
         $name=$trackData['id'];
         $name.='_'.$i;
-        if(!isset($trackData['productLine']))
-        {
-            $msg="fail generate product img name: try to use unknown key 'productLine' data from trackData".  json_encode($trackData);
-            throw new Website_ElementException($this,self::SELECTOR_DATATRACT,$msg);
-        }
-        $name.="_".$trackData['productLine'];
-        if(!$trackData['name'])
-        {
-            $msg="fail generate product img name: try to use unknown key 'name' data from trackData".  json_encode($trackData);
-            throw new Website_ElementException($this,self::SELECTOR_DATATRACT,$msg);
-        }
-        $name.="_".$trackData['name'];
-        return urlencode($name);
+        return $name;
+//        if(!isset($trackData['productLine']))
+//        {
+//            $msg="fail generate product img name: try to use unknown key 'productLine' data from trackData".  json_encode($trackData);
+//            throw new Website_ElementException($this,self::SELECTOR_DATATRACT,$msg);
+//        }
+//        $name.="_".$trackData['productLine'];
+//        if(!$trackData['name'])
+//        {
+//            $msg="fail generate product img name: try to use unknown key 'name' data from trackData".  json_encode($trackData);
+//            throw new Website_ElementException($this,self::SELECTOR_DATATRACT,$msg);
+//        }
+//        $name.="_".$trackData['name'];
+//        return urlencode($name);
 
 //        if(!isset($trackData['productLine']))
 //        {
@@ -67,13 +68,13 @@ class Hansgrohe_Product extends Website_Page_Product_Multi
 //        }
 //        return $trackData['productLine'].'_'.$trackData['name'];
     }
-//    public function prodId() {
-//        $trackData=$this->getDataTrack();
-//        if(!isset($trackData['id']))
-//        {
-//            $msg="fail to extract product id; unknown key 'id' in trackData".  json_encode($trackData);
-//            throw new Website_ElementException($this,self::SELECTOR_DATATRACT,$msg);
-//        }
-//        return $trackData['id'];
-//    }
+    public function getProductId() {
+        $trackData=$this->getDataTrack();
+        if(!isset($trackData['id']))
+        {
+            $msg="fail to extract product id; try to use unknown key 'id' extract data from trackData".  json_encode($trackData);
+            throw new Website_ElementException($this,self::SELECTOR_DATATRACT,$msg);
+        }
+        return $trackData['id'];
+    }
 }

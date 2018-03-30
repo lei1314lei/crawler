@@ -16,9 +16,11 @@ class Hansgrohe_Action_ExtractAllProductsImgInfo
         $this->_failLogger=new Base_Logger_Crawler(self::LOG_FILE_FAILED);
         $this->_exceptionLogger=new Base_ExceptionLogger('exception.log');
     }
-    protected function _allImgsInfo()
+    protected function _unsetLogger()
     {
-        
+        $this->_successLogger=null;
+        $this->_failLogger=null;
+        $this->_exceptionLoger=null;
     }
     public function execute($print)
     {
@@ -59,6 +61,7 @@ class Hansgrohe_Action_ExtractAllProductsImgInfo
                 $this->_exceptionLogger->record($ex);
             }
         }
+        $this->_unsetLogger();
     }
 
     protected function _logSuccessItems($imgsInfo)
