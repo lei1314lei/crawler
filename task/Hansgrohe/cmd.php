@@ -17,6 +17,11 @@ class DownloadProductImg_Shell extends Shell{
             }
         }
     }
+    public function downloadAllProdsImg()
+    {
+        $action=new Hansgrohe_Action_DownloadAllProImgs();
+        $action->execute(true);
+    }
     public function extractProdsImgInfo($prodUrl='ALL')
     {
         if('ALL'==$prodUrl)

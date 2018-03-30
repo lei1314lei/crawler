@@ -24,18 +24,17 @@ class Hansgrohe_Action_ExtractAllProductsImgInfo
     {
         $this->_initLogger();
        // set_time_limit(120); 
-        $timer=time();
         $action=new Hansgrohe_Action_ExtractAllProdsUrlInfo();
         $allPrudsUrlInfo=$action->execute($print);
         $allImgsInfo=array();
-        echo time()-$timer,"<hr>";
         foreach($allPrudsUrlInfo as $key=>$info)
         {
             $prodUrl=$info[Website_Page_Pagination_Category::DATA_PROD_URL];
             $prodPage=new Hansgrohe_Product($prodUrl);
+
             try{
                 $imgsInfo=$prodPage->getProdImgsInfo();
-                $this->_logSuccessItems($imgsInfo);
+                $this->_logSuccessItems($imgsInfo); 
                 $allImgsInfo=array_merge($allImgsInfo,$imgsInfo);
                 
                 

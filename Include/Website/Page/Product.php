@@ -3,32 +3,39 @@
 abstract class Website_Page_Product extends Website_Page{
     const DATA_ADDITION_IMG_NAME="imgName";
     const DATA_PROD_IMG="src";
-    
-    abstract protected function _imgName();
+   // const IMG_NAME_SEPARATOR="_";
+    abstract protected function _imgName($i);
     abstract public function imgSelector();
     public function getProdImgsInfo($exceptedImgCount=null)
     {
         $srcs=$this->_getImgSRCs($exceptedImgCount);
-        $name=$this->_imgName();
-        if(count($srcs)>1)
+        $timer=0;
+        foreach($srcs as $i=>$src)
         {
-            $timer=0;
-            foreach($srcs as $src)
-            {
-                $timer++;
-                $info[self::DATA_PROD_IMG]=$src;
-                $info[self::DATA_ADDITION_IMG_NAME]=$name.'_'.$timer;
-            }
-        }else{
-            $info[self::DATA_PROD_IMG]=array_pop($srcs);
-            $info[self::DATA_ADDITION_IMG_NAME]=$name;
-            
+            $timer++;
+            $info[self::DATA_PROD_IMG]=$src;
+            $info[self::DATA_ADDITION_IMG_NAME]=$this->_imgName($i);
         }
+        
+//        $prodId=$this->prodId();
+//        $srcs=$this->_getImgSRCs($exceptedImgCount);
+//        $name=$this->_imgName();
+//        $timer=0;
+//        foreach($srcs as $src)
+//        {
+//            $timer++;
+//            $info[self::DATA_PROD_IMG]=$src;
+//            $info[self::DATA_ADDITION_IMG_NAME]="$prodId-$timer--".SELF::IMG_NAME_SEPARATOR.$name;
+//        }
         $info[self::DATA_ADDITION_SELECTOR]=$this->imgSelector();
         $info[self::DATA_ADDITION_FROM_PAGE]=$this->_pageUrl;
         $infos[]=$info;
         return $infos;
     }
+
+
+
+
     protected function _getAttrSrcName()
     {
         return "src";

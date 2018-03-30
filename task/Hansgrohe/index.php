@@ -2,6 +2,43 @@
 $include="../../EnvInit.php";
 include_once $include;
 
+//$logger=new Base_Logger_Crawler('test.log');
+//$row=array("haha",urlencode("Küch"));
+//$logger->addRow("this is key3", $row);
+//foreach($logger->readAllRows() as $row)
+//{
+//    var_dump(urldecode($row[1]));
+//}
+//exit;
+
+
+
+
+            $action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
+            $action->execute(true);exit;
+//
+//
+        $action=new Hansgrohe_Action_DownloadAllProImgs();
+        $action->execute(true);
+        echo 'ok';exit;
+
+
+
+
+
+
+//$prodUrl="https://www.hansgrohe.de/articledetail-metris-select-einhebel-kuechenmischer-320-mit-ausziehauslauf-14884000";
+//$prodPage=new Hansgrohe_Product($prodUrl);
+//$prodPage->getPageDoc();
+//exit;
+//
+//
+//$data=$prodPage->getDataTrack();
+//var_dump($data);exit;
+
+$action=new Hansgrohe_Action_DownloadAllProImgs();
+$action->execute(true);exit;
+
 
 //$eleExLogger=new Base_Logger_Crawler('test.log');
 //$page=new Website_Page('http://test.com','test');
@@ -11,11 +48,9 @@ include_once $include;
 //$eleExLogger->logEx($ex);exit;
 
 
-            $action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
-            $action->execute(true);exit;
 
-$action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
-$action->execute();exit;
+
+
 
 
 $timer=time();

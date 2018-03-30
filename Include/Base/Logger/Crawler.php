@@ -37,7 +37,7 @@ class Base_Logger_Crawler extends log
         $url=$page->getPageUrl();
         $selector=$ex->getSelector();
         $key=self::key($url);
-        $row=array(self::KEY_ELE_SELCTOR=>$selector,'msg'=>$ex->getMessage());
+        $row=array('page-url'=>$url,self::KEY_ELE_SELCTOR=>$selector,'ExMsg'=>$ex->getMessage());
         //$row=array('page-url'=>$url,"selector"=>$selector,'msg'=>$ex->getMessage());
         $this->addRow($key,$row);
     }

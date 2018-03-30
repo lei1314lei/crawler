@@ -20,6 +20,7 @@ class Hansgrohe_Action_ExtractAllProdsUrlInfo
         {
             $prodsUrlInfo=array_merge($prodsUrlInfo,$this->_getProdsUrlInfo($categoryUrl,$print));
         }
+        $this->_unsetLogger();
         return $prodsUrlInfo;
     }
     protected function _initLogger()
@@ -27,6 +28,13 @@ class Hansgrohe_Action_ExtractAllProdsUrlInfo
         $this->_successLogger =new Base_Logger_Crawler(self::LOG_FILE_SUCCESS);
         $this->_failLogger=new Base_Logger_Crawler(self::LOG_FILE_FAILED);
         $this->_exceptionLoger=new Base_ExceptionLogger('exception.log');
+    }
+    protected function _unsetLogger()
+    {
+        $this->_successLogger=null;
+        $this->_failLogger=null;
+        $this->_exceptionLoger;
+        
     }
     protected function _getProdsUrlInfo($categoryUrl,$print)
     {
