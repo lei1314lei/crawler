@@ -2,6 +2,136 @@
 $include="../../EnvInit.php";
 include_once $include;
 
+        $logger=new Base_Logger_Crawler("v2_lq_hansgrohe_imgInfo.log");
+        $imgsInfo=$logger->readAllRows();
+        foreach($imgsInfo as $key=>$imgInfo)
+        {
+            $imgInfo['src']=preg_replace("/\?.+/", "", $imgInfo['src']);
+            $imgsInfo[$key]=  $imgInfo;
+        }
+        var_dump($imgsInfo);exit;
+
+
+
+
+
+
+
+            $action=new Hansgrohe_Action_DownloadAllProductsPage();
+           // $action->execute(true);
+            $action->tmp(true);
+            exit;
+            
+            
+            
+            
+            $cateogryUrls= array(
+                'https://www.hansgrohe.de/bad/produkte',
+                'https://www.hansgrohe.de/bad/produkte/duschen',
+                'https://www.hansgrohe.de/bad/produkte/armaturen',
+                'https://www.hansgrohe.de/bad/produkte/thermostate',
+                'https://www.hansgrohe.de/bad/produkte/badaccessoires',
+                'https://www.hansgrohe.de/bad/produkte/installationstechnik',
+                'https://www.hansgrohe.de/bad/produkte/ablaufsysteme',
+                'https://www.hansgrohe.de/bad/produkte/linien',
+                'https://www.hansgrohe.de/kueche/produkte',
+                'https://www.hansgrohe.de/kueche/produkte/spuelenkombinationen',
+                'https://www.hansgrohe.de/kueche/produkte/kuechenarmaturen',
+                'https://www.hansgrohe.de/kueche/produkte/kuechenspuelen',
+                'https://www.hansgrohe.de/kueche/produkte/linien',
+                );
+            $action=new Hansgrohe_Action_ExtractProdUrlsInfo();
+            $action->setToBeCmdMode();
+            $prodUrls=$action->batchExtractFromCategories($cateogryUrls); 
+            $action=new Hansgrohe_Action_ExtractProductImgsInfo();
+            $action->setToBeCmdMode();
+            $imgsInfo=$action->batchExtract($prodUrls);
+            exit;
+            
+            
+            $cateogryUrls= array(
+                'https://www.hansgrohe.de/bad/produkte',
+                'https://www.hansgrohe.de/bad/produkte/duschen',
+                'https://www.hansgrohe.de/bad/produkte/armaturen',
+                'https://www.hansgrohe.de/bad/produkte/thermostate',
+                'https://www.hansgrohe.de/bad/produkte/badaccessoires',
+                'https://www.hansgrohe.de/bad/produkte/installationstechnik',
+                'https://www.hansgrohe.de/bad/produkte/ablaufsysteme',
+                'https://www.hansgrohe.de/bad/produkte/linien',
+                'https://www.hansgrohe.de/kueche/produkte',
+                'https://www.hansgrohe.de/kueche/produkte/spuelenkombinationen',
+                'https://www.hansgrohe.de/kueche/produkte/kuechenarmaturen',
+                'https://www.hansgrohe.de/kueche/produkte/kuechenspuelen',
+                'https://www.hansgrohe.de/kueche/produkte/linien',
+                );
+            $action=new Hansgrohe_Action_ExtractProdUrlsInfo();
+            $action->setToBeCmdMode();
+            $allPrudsUrlInfo=$action->batchExtractFromCategories($cateogryUrls); 
+            exit;
+
+
+
+
+
+
+
+
+
+
+
+
+
+$logger=new Base_Logger_Crawler(Hansgrohe_Action_ExtractProductImgsInfo::LOG_FILE_SUCCESS);
+$imgsInfo=$logger->readAllRows();
+
+$action=new Hansgrohe_Action_DownloadProdImgs();
+$action->setToBeCmdMode();
+$action->batchDownload($imgsInfo);
+exit;
+
+
+
+
+
+
+
+
+
+$prodUrl="https://www.hansgrohe.de/articledetail-raindance-s-kopfbrause-300-1jet-mit-brausearm-27493000";
+
+$action=new Hansgrohe_Action_ExtractProductImgsInfo();
+$action->extract($prodUrl);
+exit;
+
+
+
+
+
+
+$cateogryUrls=array(
+    'https://www.hansgrohe.de/kueche/produkte',
+    'https://www.hansgrohe.de/bad/produkte'
+    );
+$action=new Hansgrohe_Action_ExtractProdUrlsInfo();
+$allPrudsUrlInfo=$action->batchExtractFromCategories($cateogryUrls); 
+//exit;
+$prodUrls=array();
+foreach($allPrudsUrlInfo as $prodUrlsInfo)
+{
+    $prodUrls[]=$prodUrlsInfo['prodUrl'];
+}
+$action=new Hansgrohe_Action_ExtractProductImgsInfo();
+$imgsInfo=$action->batchExtract($prodUrls); exit;
+
+
+
+$prodUrl="https://www.hansgrohe.de/articledetail-logis-einhebel-waschtischmischer-70-coolstart-mit-zugstangen-ablaufgarnitur-71072000";
+$print=true;
+$action=new Hansgrohe_Action_ExtractProductImgsInfo();
+$action->setToBeCmdMode();
+$imgsInfo=$action->extract($prodUrl);
+var_dump($imgsInfo);exit;
+
 //$logger=new Base_Logger_Crawler('test.log');
 //$row=array("haha",urlencode("Küch"));
 //$logger->addRow("this is key3", $row);

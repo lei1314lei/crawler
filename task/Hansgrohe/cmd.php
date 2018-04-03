@@ -17,17 +17,70 @@ class DownloadProductImg_Shell extends Shell{
             }
         }
     }
+    public function downloadHqPics()
+    {
+        $logger=new Base_Logger_Crawler("v2_lq_hansgrohe_imgInfo.log");
+        $imgsInfo=$logger->readAllRows();
+        foreach($imgsInfo as $key=>$imgInfo)
+        {
+            $imgInfo['src']=preg_replace("/\?.+/", "", $imgInfo['src']);
+            $imgsInfo[$key]=  $imgInfo;
+        }
+        $action=new Hansgrohe_Action_DownloadProdImgs();
+        $action->setToBeCmdMode();
+        $action->batchDownload($imgsInfo);
+    }
     public function downloadAllProdsImg()
     {
-        $action=new Hansgrohe_Action_DownloadAllProImgs();
-        $action->execute(true);
+//        $action=new Hansgrohe_Action_DownloadProdImgs();
+//        $action->setToBeCmdMode();
+//        $imgsInfo=$this->extractProdsImgInfo('ALL');
+        
+        $logger=new Base_Logger_Crawler(Hansgrohe_Action_ExtractProductImgsInfo::LOG_FILE_SUCCESS);
+        $imgsInfo=$logger->readAllRows();
+        
+        $action=new Hansgrohe_Action_DownloadProdImgs();
+        $action->setToBeCmdMode();
+        $action->batchDownload($imgsInfo);
+    }
+    public function extractProdUrlsInfo()
+    {
+//            $cateogryUrls=array(
+//                'https://www.hansgrohe.de/kueche/produkte',
+//                'https://www.hansgrohe.de/bad/produkte'
+//                );
+            $cateogryUrls= array(
+                'https://www.hansgrohe.de/bad/produkte',
+                'https://www.hansgrohe.de/bad/produkte/duschen',
+                'https://www.hansgrohe.de/bad/produkte/armaturen',
+                'https://www.hansgrohe.de/bad/produkte/thermostate',
+                'https://www.hansgrohe.de/bad/produkte/badaccessoires',
+                'https://www.hansgrohe.de/bad/produkte/installationstechnik',
+                'https://www.hansgrohe.de/bad/produkte/ablaufsysteme',
+                'https://www.hansgrohe.de/bad/produkte/linien',
+                'https://www.hansgrohe.de/kueche/produkte',
+                'https://www.hansgrohe.de/kueche/produkte/spuelenkombinationen',
+                'https://www.hansgrohe.de/kueche/produkte/kuechenarmaturen',
+                'https://www.hansgrohe.de/kueche/produkte/kuechenspuelen',
+                'https://www.hansgrohe.de/kueche/produkte/linien',
+                );
+            $action=new Hansgrohe_Action_ExtractProdUrlsInfo();
+            $action->setToBeCmdMode();
+            $prodUrls=$action->batchExtractFromCategories($cateogryUrls); 
+            return $prodUrls;
     }
     public function extractProdsImgInfo($prodUrl='ALL')
     {
         if('ALL'==$prodUrl)
         {
-            $action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
-            $action->execute(true);
+            $prodUrls=$this->extractProdUrlsInfo();
+            $action=new Hansgrohe_Action_ExtractProductImgsInfo();
+            $action->setToBeCmdMode();
+            $imgsInfo=$action->batchExtract($prodUrls);
+            return $imgsInfo;
+            
+//            $action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
+//            $action->execute(true);
         }else{
             $page = new Hansgrohe_Product($url);
             $imgsInfo=$page->getProdImgsInfo();

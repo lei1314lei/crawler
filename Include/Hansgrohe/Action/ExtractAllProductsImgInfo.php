@@ -4,8 +4,8 @@ class Hansgrohe_Action_ExtractAllProductsImgInfo
 {
     protected $_failedItems;
 
-    const LOG_FILE_FAILED="hansgrohe_imgInfo_failed.log";
-    const LOG_FILE_SUCCESS="hansgrohe_imgInfo.log";
+    const LOG_FILE_FAILED=Hansgrohe_Action_ExtractProductImgsInfo::LOG_FILE_FAILED;
+    const LOG_FILE_SUCCESS=Hansgrohe_Action_ExtractProductImgsInfo::LOG_FILE_SUCCESS;
     protected $_successLogger;
     protected $_failLogger;
     protected $_exceptionLogger;
@@ -32,19 +32,16 @@ class Hansgrohe_Action_ExtractAllProductsImgInfo
         foreach($allPrudsUrlInfo as $key=>$info)
         {
             $prodUrl=$info[Website_Page_Pagination_Category::DATA_PROD_URL];
-            $prodPage=new Hansgrohe_Product($prodUrl);
-
-            try{
-                $imgsInfo=$prodPage->getProdImgsInfo();
-                $this->_logSuccessItems($imgsInfo); 
-                $allImgsInfo=array_merge($allImgsInfo,$imgsInfo);
+            $action=new Hansgrohe_Action_ExtractProductImgsInfo();
+            
+            
+            if($action->execute($prodUrl))
+            {
                 
+            }else{
                 
-                $otherSmpImgsInfos=$prodPage->getProImgsInfoFromOtherSmpProdPage();
-                $this->_logSuccessItems($otherSmpImgsInfos);
-                $allImgsInfo=array_merge($allImgsInfo,$otherSmpImgsInfos);
-                
-                
+            }
+            
                 static $timer=0;
                 $timer++;
                 $msg="Success to extract imgs from product($timer)";
@@ -52,14 +49,34 @@ class Hansgrohe_Action_ExtractAllProductsImgInfo
                 {
                      echo $msg."\r\n";
                 }
-
-            } catch (Website_ElementException $ex) {
-                $this->_failLogger->logEx($ex);
-                continue;
-            }catch(Exception $ex)
-            {
-                $this->_exceptionLogger->record($ex);
-            }
+//            $prodPage=new Hansgrohe_Product($prodUrl);
+//
+//            try{
+//                $imgsInfo=$prodPage->getProdImgsInfo();
+//                $this->_logSuccessItems($imgsInfo); 
+//                $allImgsInfo=array_merge($allImgsInfo,$imgsInfo);
+//                
+//                
+//                $otherSmpImgsInfos=$prodPage->getProImgsInfoFromOtherSmpProdPage();
+//                $this->_logSuccessItems($otherSmpImgsInfos);
+//                $allImgsInfo=array_merge($allImgsInfo,$otherSmpImgsInfos);
+//                
+//                
+//                static $timer=0;
+//                $timer++;
+//                $msg="Success to extract imgs from product($timer)";
+//                if($print)
+//                {
+//                     echo $msg."\r\n";
+//                }
+//
+//            } catch (Website_ElementException $ex) {
+//                $this->_failLogger->logEx($ex);
+//                continue;
+//            }catch(Exception $ex)
+//            {
+//                $this->_exceptionLogger->record($ex);
+//            }
         }
         $this->_unsetLogger();
     }

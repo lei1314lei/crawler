@@ -24,7 +24,7 @@ class Website_Page{
         $this->_siteCode=$code;
     }
     public function __construct($pageUrl,$siteCode) {
-        if(!$pageUrl) throw new Exception('invalid page url');
+        if(!$pageUrl || !is_string($pageUrl)) throw new Exception('invalid page url');
         $this->_pageUrl=$pageUrl;
         $this->_siteCode=$siteCode;
     }

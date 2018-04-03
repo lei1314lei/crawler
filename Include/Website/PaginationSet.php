@@ -14,6 +14,11 @@ class Website_PaginationSet
     {
         return $this->_itemsFromAllPaginationByMethod("getElesBySelector",$selector,$attr);
     }
+    public function getTotalNumOfPaginations()
+    {
+        $allPaginations=$this->getAllPaginations();
+        return count($allPaginations);
+    }
     public function getAllPaginations()
     {
         if(!isset($this->_allPaginations))

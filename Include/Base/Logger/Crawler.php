@@ -46,14 +46,14 @@ class Base_Logger_Crawler extends log
         return MD5($url);
     }
     public function addRow($key,Array $row) {
-        if(!$this->_isLogged($key))
+        if(!$this->isLogged($key))
         {
             $row[self::KEY_INDEX]=$key;
             parent::addRow(json_encode($row));
             $this->_allRows[$key]=$row;
         }
     }
-    protected function _isLogged($key)
+    public function isLogged($key)
     {
         return isset($this->_allRows[$key])?true:false;
     }

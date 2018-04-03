@@ -4,8 +4,9 @@ class Hansgrohe_Action_DownloadAllProductsPage
 {
     public function tmp($print)
     {
-        $action=new Hansgrohe_Action_ExtractAllProdsUrlInfo();
-        $allPrudsUrlInfo=$action->execute($print);
+//        $action=new Hansgrohe_Action_ExtractAllProdsUrlInfo();
+//        $allPrudsUrlInfo=$action->execute($print);
+        new Base_Logger_Crawler();
         foreach($allPrudsUrlInfo as $key=>$info )
         {
             $url=$info['value'];

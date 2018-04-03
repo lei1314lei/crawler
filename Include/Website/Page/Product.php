@@ -18,6 +18,9 @@ abstract class Website_Page_Product extends Website_Page{
             $info[self::DATA_PROD_IMG]=$src;
             $info[self::DATA_ADDITION_IMG_NAME]=$this->_imgName($i);
             $info[self::DATA_PROD_ID]=$this->getProductId();
+            $info[self::DATA_ADDITION_SELECTOR]=$this->imgSelector();
+            $info[self::DATA_ADDITION_FROM_PAGE]=$this->_pageUrl;
+            $imgsInfo[]=$info;
         }
 //        $srcs=$this->_getImgSRCs($exceptedImgCount);
 //        $name=$this->_imgName();
@@ -28,10 +31,9 @@ abstract class Website_Page_Product extends Website_Page{
 //            $info[self::DATA_PROD_IMG]=$src;
 //            $info[self::DATA_ADDITION_IMG_NAME]="$prodId-$timer--".SELF::IMG_NAME_SEPARATOR.$name;
 //        }
-        $info[self::DATA_ADDITION_SELECTOR]=$this->imgSelector();
-        $info[self::DATA_ADDITION_FROM_PAGE]=$this->_pageUrl;
-        $infos[]=$info;
-        return $infos;
+
+        
+        return $imgsInfo;
     }
 
 

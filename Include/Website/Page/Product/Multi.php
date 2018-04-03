@@ -1,18 +1,6 @@
 <?php
 
 abstract class Website_Page_Product_Multi  extends Website_Page_Product{
-//    public function hasOtherSimpleProds()
-//    {
-//        
-//    }
-//    public function getOtherSmpProdUrls()
-//    {
-//        
-//    }
-//    public function getProImgsInfoFromOtherSmpProdPage()
-//    {
-//        
-//    }
     protected  $_simpleProdEles; 
     abstract protected function _simpleProdEleSelector();
     
@@ -36,7 +24,7 @@ abstract class Website_Page_Product_Multi  extends Website_Page_Product{
     public function hasOtherSimpleProds()
     {
         $simProdEles=$this->_getSimpleProdEles();
-        return $simProdEles->count()>1?true:false;
+        return count($simProdEles)>1?true:false;
     }
     
     
@@ -45,8 +33,12 @@ abstract class Website_Page_Product_Multi  extends Website_Page_Product{
     {
         if(!isset($this->_simpleProdEles))
         {
-            $selector=$this->_simpleProdEleSelector();
-            $smpProdEles=$this->getElesBySelector($selector);
+            try {
+                $selector=$this->_simpleProdEleSelector();
+                $smpProdEles=$this->getElesBySelector($selector);
+            } catch (Website_ElementException $ex) {
+                $smpProdEles=array();
+            }
             $this->_simpleProdEles=$smpProdEles;
         }
         return $this->_simpleProdEles;
@@ -59,15 +51,12 @@ abstract class Website_Page_Product_Multi  extends Website_Page_Product{
     public function getProImgsInfoFromOtherSmpProdPage()
     {
         $imgsInfo=array();
-        if($this->hasOtherSimpleProds())
+        $prodUrls=$this->getOtherSmpProdUrls();
+        foreach($prodUrls as $prodUrl)
         {
-            $prodUrls=$this->getOtherSmpProdUrls();
-            foreach($prodUrls as $prodUrl)
-            {
-                $class=get_class($this);
-                $prodPage=new $class($prodUrl);
-                $imgsInfo=  array_merge($imgsInfo,$prodPage->getProdImgsInfo());
-            }
+            $class=get_class($this);
+            $prodPage=new $class($prodUrl);
+            $imgsInfo=  array_merge($imgsInfo,$prodPage->getProdImgsInfo());
         }
         return $imgsInfo;
     }
