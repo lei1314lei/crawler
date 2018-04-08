@@ -1,9 +1,6 @@
 <?php
 $include="../../EnvInit.php";
 include_once $include;
-//$setting='../setting.php';
-//var_dump(realpath($setting));
-//include_once $setting;
 class DownloadProductImg_Shell extends Shell{
 
     public function run() {
@@ -45,10 +42,6 @@ class DownloadProductImg_Shell extends Shell{
     }
     public function extractProdUrlsInfo()
     {
-//            $cateogryUrls=array(
-//                'https://www.hansgrohe.de/kueche/produkte',
-//                'https://www.hansgrohe.de/bad/produkte'
-//                );
             $cateogryUrls= array(
                 'https://www.hansgrohe.de/bad/produkte',
                 'https://www.hansgrohe.de/bad/produkte/duschen',
@@ -78,9 +71,6 @@ class DownloadProductImg_Shell extends Shell{
             $action->setToBeCmdMode();
             $imgsInfo=$action->batchExtract($prodUrls);
             return $imgsInfo;
-            
-//            $action=new Hansgrohe_Action_ExtractAllProductsImgInfo();
-//            $action->execute(true);
         }else{
             $page = new Hansgrohe_Product($url);
             $imgsInfo=$page->getProdImgsInfo();
@@ -112,49 +102,16 @@ class DownloadProductImg_Shell extends Shell{
             }
        }
     }
-    public function extractProdUrl()
-    {
-        $action=new Hansgrohe_Action_ExtractAllProdsUrlInfo();
-        $action->execute(true);
-    }
-    
-    public function getProductImgExhaustively($haha)
-    {
-        $action=new Hansgrohe_Action_ExtractAllProdsImgInfo();
-        $action->execute(true);exit;
-        
-        
-//        $EXCEPTIONLOGGER=new Base_ExceptionLogger('exception.log');
-//        $hnsgrhProdUrlSuccessLogger=new log("hansgrohe_prodUrl.log");
-//        $hnsgrhProdUrlFailLogger=new log("hansgrohe_prodUrl_failed.log");
-//        $hnsgrhImgInfoSuccessLogger=new log("hansgrohe_imgInfo.log");
-//        $hnsgrhImgInfoFailLogger=new log("hansgrohe_imgInfo_failed.log");
-        
-//        $filename=_LOG_DIR_.DS."hansgrohe_prodUrl.log";
-//        $handle = @fopen($filename, "r");
-//        if ($handle) {
-//            while (($row = fgets($handle, 4096)) !== false) {
-//                $info=json_decode($row);
-//                $prodsUrl[]=$info->value;
-//            }
-//            if (!feof($handle)) {
-//                echo "Error: unexpected fgets() fail\n";
-//            }
-//            fclose($handle);
-//        }
-//        $imgsInfo=array();
-        foreach($prodsUrl as $prodUrl)
-        {
-            $prodPage=new Hansgrohe_Product($prodUrl);
-
-        }
-    }
 
     public function usageHelp() {
         return <<<USAGE
 Usage:  php -f cmd.php -- [options]
-  --info <manufacturer> fetch <manufacturer> Data 
-  --url  <manufacturer>  fetch all manufacturers product urls data
+  --downloadHqPics <manufacturer> 
+  --downloadAllProdsImg  <manufacturer>  
+  --downloadProdPage
+  --extractProdUrlsInfo  
+  --extractProdsImgInfo  <productUrl>  
+        
   all    fetch all <manufacturer> Data
   help                          This help
 USAGE;
