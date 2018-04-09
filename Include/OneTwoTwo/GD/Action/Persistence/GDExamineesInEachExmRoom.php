@@ -3,17 +3,20 @@
 // `zone` varchar(255) NOT NULL,
 // `date` int(6) NOT NULL,
 // `room_name` varchar(255) NOT NULL,
-// `numb_sbj_1` varchar(10) NOT NULL COMMENT '科目一考试人数',
-// `numb_sbj_2` varchar(10) NOT NULL COMMENT '科目二考试人数',
-// `numb_sbj_3` varchar(10) NOT NULL COMMENT '科目三考试人数',
-// `numb_sbj_4` varchar(10) NOT NULL COMMENT '安全文明考试人数',
+// `numb_sbj_1` int(10) NOT NULL COMMENT '科目一考试人数',
+// `numb_sbj_2` int(10) NOT NULL COMMENT '科目二考试人数',
+// `numb_sbj_3` int(10) NOT NULL COMMENT '科目三考试人数',
+// `numb_sbj_4` int(10) NOT NULL COMMENT '安全文明考试人数',
 // UNIQUE KEY `month` (`date`,`zone`,`room_name`)
 //) ENGINE=InnoDB DEFAULT CHARSET=utf8
 class OneTwoTwo_GD_Action_Persistence_GDExamineesInEachExmRoom
 {
     protected $_tab="examinees_in_each_room";
     protected $_db='gd122';
-
+    protected $_month;
+    public function __construct($month) {
+        $this->_month=$month;
+    }
 
     protected function _convertToTabCols(Array $titleRow,$allMatch=true)
     {
@@ -43,17 +46,17 @@ class OneTwoTwo_GD_Action_Persistence_GDExamineesInEachExmRoom
         }
         if($allMatch)
         {
-            var_dump($cols,$titleRow);
             if(!$cols || count($cols)!==count($titleRow)) throw new Exception("Unexcepted total number of table cols");
         }
         return $cols;
     }
     public function execute()
     {
-        $dateTime=new DateTime();
-        $interval=new DateInterval('P2M');
-        $dateTime->sub($interval);
-        $month=$dateTime->format('Ym');
+//        $dateTime=new DateTime();
+//        $interval=new DateInterval('P2M');
+//        $dateTime->sub($interval);
+//        $month=$dateTime->format('Ym');
+        $month=$this->_month;
         foreach($this->_allZoneCodesOfGD() as $zone)
         {
             $action=new OneTwoTwo_GD_Action_ExaminationRoom_NumbOfExamineeList($month,$zone);
@@ -84,13 +87,9 @@ class OneTwoTwo_GD_Action_Persistence_GDExamineesInEachExmRoom
         foreach($rowItems as $rowData)
         {
             $rowData[]=$zone;
-           
             $valueItemsForTab[]=" ('" .implode("','",$rowData) . "')";
-           //  var_dump($tabCols,$valueItemsForTab);exit;
         }
         $query.=implode(',',$valueItemsForTab)." ;";
-        
-        echo $query;
         $this->_query("set names utf8");
         $this->_query($query);
     }

@@ -12,10 +12,11 @@
 //) ENGINE=InnoDB DEFAULT CHARSET=utf8
 class OneTwoTwo_GD_Action_Persistence_GDDriverSchoolQuality
 {
-    protected function _logFileName()
-    {
-        
+    protected $_month;
+    public function __construct($month) {
+        $this->_month=$month;
     }
+
     protected function _convertToTabCols(Array $titleRow,$allMatch=true)
     {
         $cols=array();
@@ -44,17 +45,13 @@ class OneTwoTwo_GD_Action_Persistence_GDDriverSchoolQuality
         }
         if($allMatch)
         {
-            var_dump($cols,$titleRow);
             if(!$cols || count($cols)!==count($titleRow)) throw new Exception("Unexcepted total number of table cols");
         }
         return $cols;
     }
     public function execute()
     {
-        $dateTime=new DateTime();
-        $interval=new DateInterval('P2M');
-        $dateTime->sub($interval);
-        $month=$dateTime->format('Ym');
+        $month=$this->_month;
         foreach($this->_allZoneCodesOfGD() as $zone)
         {
             $action=new OneTwoTwo_GD_Action_DriverSchool_QualityList($month,$zone);
@@ -89,11 +86,9 @@ class OneTwoTwo_GD_Action_Persistence_GDDriverSchoolQuality
             $rowData[]=$zone;
            
             $valueItemsForTab[]=" ('" .implode("','",$rowData) . "')";
-           //  var_dump($tabCols,$valueItemsForTab);exit;
         }
         $query.=implode(',',$valueItemsForTab)." ;";
         
-        echo $query;
         $this->_query("set names utf8");
         $this->_query($query);
     }

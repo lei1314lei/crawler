@@ -2,12 +2,18 @@
 $include="../../EnvInit.php";
 include_once $include;
 
-
-$action = new OneTwoTwo_GD_Action_Persistence_GDExamineesInEachExmRoom();
+        $dateTime=new DateTime();
+        $interval=new DateInterval('P2M');
+        $dateTime->sub($interval);
+        $month=$dateTime->format('Ym');
+  
+$action = new OneTwoTwo_GD_Action_Persistence_GDDriverSchoolQuality(201802);
 $action->execute();exit;
 
-$action = new OneTwoTwo_GD_Action_Persistence_GDDriverSchoolQuality();
+$action = new OneTwoTwo_GD_Action_Persistence_GDExamineesInEachExmRoom('201803');
 $action->execute();exit;
+
+
 
 
 //$targetMonth=201803;
